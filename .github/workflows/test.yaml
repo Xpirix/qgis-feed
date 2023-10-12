@@ -45,8 +45,8 @@ jobs:
     
     - name: Run test
       run: |
-        docker-compose -f docker-compose.dev.yml exec -T makemigrations
-        docker-compose -f docker-compose.dev.yml exec -T migrate
+        docker-compose -f docker-compose.dev.yml exec -T qgisfeed python qgisfeedproject/manage.py makemigrations
+        docker-compose -f docker-compose.dev.yml exec -T qgisfeed python qgisfeedproject/manage.py migrate
         docker-compose -f docker-compose.dev.yml exec -T qgisfeed python qgisfeedproject/manage.py test qgisfeed
         exit_code=$?
         docker-compose -f docker-compose.dev.yml down
