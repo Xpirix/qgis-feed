@@ -43,19 +43,9 @@ jobs:
     - name: Run the containers
       run: docker-compose -f docker-compose.dev.yml up -d
     
-    - name: Run Coverage test
+    - name: Run test
       run: |
-        cat << EOF | docker-compose -f docker-compose.dev.yml exec -T qgisfeed bash
-        pip install coverage
-        python qgisfeedproject/manage.py makemigrations
-        python qgisfeedproject/manage.py migrate
-        coverage run qgisfeedproject/manage.py test
-        coverage xml
-        EOF
-
-    - name: Upload coverage to codecov
-      uses: codecov/codecov-action@v3
-      with:
-        fail_ci_if_error: true
-        token: ${{ secrets.CODECOV_TOKEN }}
-
+      docker-compose -f docker-compose.dev.yml exec qgisfeed python qgisfeedproject/manage.py test 
+      exit_code=$?
+      docker-compose -f docker-compose.dev.yml down
+      exit $exit_code
