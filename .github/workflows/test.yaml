@@ -47,9 +47,9 @@ jobs:
       run: |
         cat << EOF | docker-compose -f docker-compose.dev.yml exec -T qgisfeed bash
         pip install coverage
-        python manage.py makemigrations
-        python manage.py migrate
-        coverage run manage.py test
+        python qgisfeedproject/manage.py makemigrations
+        python qgisfeedproject/manage.py migrate
+        coverage run qgisfeedproject/manage.py test
         coverage xml
         EOF
 
