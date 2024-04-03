@@ -37,6 +37,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Generate the .env file
+      run: cp .env.template .env
+
     - name: Run docker-compose build
       run: docker compose -f docker-compose.dev.yml build
 
