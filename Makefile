@@ -93,8 +93,19 @@ dbrestore:
 	@echo "------------------------------------------------------------------"
 	@echo "Restore dump from /backups/latest-qgisfeed.dmp and  /backups/latest-metabase.dmp in production mode"
 	@echo "------------------------------------------------------------------"
+	@echo "stopping qgisfeed container"
+	@docker-compose -f docker-compose-production-ssl.yml stop qgisfeed
+	@echo "Dropping the gis and metabase databases"
+	-@docker-compose -f docker-compose-production-ssl.yml exec postgis su - postgres -c "dropdb --force qgisfeed"
+	-@docker-compose -f docker-compose-production-ssl.yml exec postgis su - postgres -c "dropdb --force metabase"
+	@echo "Creating the qgisfeed and metabase databases"
+	-@docker-compose -f docker-compose-production-ssl.yml exec postgis su - postgres -c "createdb -O docker -T template1 qgisfeed"
+	-@docker-compose -f docker-compose-production-ssl.yml exec postgis su - postgres -c "createdb -O docker -T template1 metabase"
+	@echo "Restore database from backups/latest-qgisfeed.dmp and backups/latest-metabase.dmp"
 	@docker-compose -f docker-compose-production-ssl.yml exec postgis su - postgres -c "pg_restore -c /backups/latest-qgisfeed.dmp -d qgisfeed"
 	@docker-compose -f docker-compose-production-ssl.yml exec postgis su - postgres -c "pg_restore -c /backups/latest-metabase.dmp -d metabase"
+	@echo "Starting qgisfeed container"
+	@docker-compose -f docker-compose-production-ssl.yml up -d qgisfeed
 
 updatemigrations:
 	@echo
